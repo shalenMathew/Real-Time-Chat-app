@@ -45,7 +45,7 @@ class LoginFragment : Fragment() {
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 is Result.Success -> {
-                    binding.progressBar.visibility = View.GONE
+                    binding.progressBar.visibility = View.VISIBLE
 
                     if (result.data!=null){
 
@@ -63,12 +63,13 @@ class LoginFragment : Fragment() {
                     }else{
                         Toast.makeText(context, "Error: ${result.message}", Toast.LENGTH_SHORT).show()
                         Log.d("TAG","Error: ${result.message}")
+                        binding.progressBar.visibility = View.GONE
                     }
 
                 }
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(context, "Error: ${result.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "${result.message}", Toast.LENGTH_LONG).show()
                     Log.d("TAG","Error: ${result.message}")
                 }
             }

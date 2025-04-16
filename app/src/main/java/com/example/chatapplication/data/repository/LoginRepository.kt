@@ -9,6 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 class LoginRepository @Inject constructor(
@@ -29,7 +32,13 @@ class LoginRepository @Inject constructor(
                 emit(Result.Error("Login failed: ${response.message()}"))
             }
         } catch (e: Exception) {
-            emit(Result.Error("Exception: ${e.localizedMessage}"))
+            val errorMessage = when (e) {
+                is SocketTimeoutException -> "Server not responding. Issue is on the server side"
+                is ConnectException -> "Unable to connect to the server. Please check your internet connection."
+                is UnknownHostException -> "Server unreachable. Please ensure you're connected to the internet."
+                else -> "Unexpected error occurred: ${e.localizedMessage}"
+            }
+            emit(Result.Error("Exception: $errorMessage"))
         }
     }.flowOn(Dispatchers.IO)
 
